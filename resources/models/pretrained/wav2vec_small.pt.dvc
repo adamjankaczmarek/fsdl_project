@@ -1,0 +1,4 @@
+outs:
+- md5: 238cb6ab5a85ead0be9f85c35e330e9d
+  size: 950500491
+  path: wav2vec_small.pt

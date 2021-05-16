@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "fsdl_keyword_spotting"
+version = "0.1.0"
+description = "FSDL Project - Keyword Spotting model on Google Speech Commands Dataset"
+authors = ["Adam Kaczmarek <adamjankaczmarek@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+torch = "^1.8.1"
+torchvision = "^0.9.1"
+torchaudio = "^0.8.1"
+dvc = {git = "https://github.com/iterative/dvc"}
+fairseq = {git = "https://github.com/pytorch/fairseq"}
+pytorch-lightning = "^1.3.1"
+torchmetrics = "^0.3.2"
+librosa = "^0.8.0"
+SoundFile = "^0.10.3"
+streamlit = {version = "^0.82.0", extras = ["production"]}
+protobuf = "^3.17.0"
+bokeh = {version = "^2.3.2", extras = ["production"]}
+streamlit-bokeh-events = {version = "^0.1.2", extras = ["production"]}
+ipython = {version = "^7.23.1", extras = ["production"]}
+matplotlib = {version = "^3.4.2", extras = ["production"]}
+PyAudio = {version = "^0.2.11", extras = ["production"]}
+Wave = {version = "^0.0.2", extras = ["production"]}
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
