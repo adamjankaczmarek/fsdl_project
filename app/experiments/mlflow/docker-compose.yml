@@ -1,0 +1,75 @@
+version: '3.3'
+
+services:
+    s3:
+      image: minio/minio:latest
+      container_name: aws-s3
+      ports:
+        - 9000:9000
+      environment:
+        - MINIO_ACCESS_KEY=${AWS_ACCESS_KEY_ID}
+        - MINIO_SECRET_KEY=${AWS_SECRET_ACCESS_KEY}
+      command: 
+        server /data
+      networks:
+        - backend
+      volumes:
+        - ./s3:/data
+
+    db:
+        restart: always
+        image: mysql/mysql-server:5.7.28
+        container_name: mlflow_db
+        expose:
+            - "3306"
+        networks:
+            - backend
+        environment:
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        volumes:
+            - dbdata:/var/lib/mysql
+
+    web:
+        restart: always
+        build:
+          context: .
+          dockerfile: Dockerfile.mlflow
+        image: mlflow_server
+        container_name: mlflow_server
+        expose:
+            - "5000"
+        environment: 
+          - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+          - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+          - AWS_DEFAULT_REGION=${AWS_REGION}
+          - MLFLOW_S3_ENDPOINT_URL=http://s3:9000
+        networks:
+            - frontend
+            - backend
+        command: mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE} --default-artifact-root s3://${AWS_BUCKET_NAME}/ --host 0.0.0.0        
+
+    nginx:
+        restart: always
+        build: 
+          context: .
+          dockerfile: Dockerfile.nginx
+        image: mlflow_nginx
+        container_name: mlflow_nginx
+        ports:
+            - "80:80"
+        networks:
+            - frontend
+        depends_on:
+            - web
+
+networks:
+    frontend:
+        driver: bridge
+    backend:
+        driver: bridge
+
+volumes:
+    dbdata:

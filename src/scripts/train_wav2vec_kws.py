@@ -8,10 +8,12 @@ from torch import nn
 from torch.utils.data import DataLoader
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger
+from pytorch_lightning.loggers import MLFlowLogger
 from torchmetrics import MetricCollection, Accuracy, Precision, Recall
+from ray.tune.integration.pytorch_lightning import TuneReportCallback
 
 
-num_workers = 1
+num_workers = 32
 pin_memory = True
 
 
@@ -22,7 +24,8 @@ cfg = {
     "weight_decay": 1e-5
 }
 
-dataset_root = "./resources/data/SpeechCommandsSplit"
+dataset_root = "/home/akaczmarek/workspace/fsdl_project/resources/data/SpeechCommandsSplit"
+
 
 class Wav2VecKWS(pl.LightningModule):
 
@@ -123,22 +126,24 @@ def train_model(config, gpus, w2v):
         monitor='val_Accuracy',
         mode='min',  
     )
+    tune_callback = TuneReportCallback({"acc": "val_Accuracy"}, on="validation_end")
     logger = TensorBoardLogger("tb_logs", name="wav2vec_kws")
-        
+    mlf_logger = MLFlowLogger(experiment_name="wav2vec_kws", tracking_uri="http://192.168.0.32")
     trainer = pl.Trainer(
         gpus=gpus, 
-        callbacks=[checkpoint_callback, early_stop_callback],
-        logger=logger,
+        callbacks=[checkpoint_callback, early_stop_callback, tune_callback],
+        logger=[logger, mlf_logger],
         accumulate_grad_batches=4,
         amp_level="O0",
-        max_epochs=1000,
-        progress_bar_refresh_rate=1
+        max_epochs=10,
+        progress_bar_refresh_rate=1,
     )
     model = Wav2VecKWS(config, w2v)
     
     trainer.fit(model)
     trainer.test()
-    trainer.save_model(config["model"]["out"])
+    
+    trainer.save_checkpoint(config["model"]["out"])
     
 
 if __name__ == "__main__":
