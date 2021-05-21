@@ -50,4 +50,4 @@ jobs:
           # This assumes pytest is installed via the install-package step above
           command: |
             poetry shell
-            dvc pull
+            dvc pull ./models/wav2vec_kws/best.ckpt.dvc
