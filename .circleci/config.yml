@@ -41,6 +41,11 @@ jobs:
           # app-dir: ~/project/package-directory/  # If you're requirements.txt isn't in the root directory.
           # pip-dependency-file: test-requirements.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
       - run:
+          name: Config GDrive Access
+          command: |
+            mkdir -p ./.dvc/tmp
+            echo '{"access_token": "ya29.a0AfH6SMD2YWhzMqZvYFGkuGBSg4iA1A9TYcVh2F_v5p1SnpQBQoazcME10cImXgXXTgB57EoZCabyPIROJkQ9i_xO6Ud-86dbY9hYQX_LzVONGc0imEQvZf1VwMzzeUX0rBueso4En8I-DHuB73ScpGrPni8e", "client_id": "710796635688-iivsgbgsb6uv1fap6635dhvuei09o66c.apps.googleusercontent.com", "client_secret": "a1Fz59uTpVNeG_VGuSKDLJXv", "refresh_token": "1//0cWHbfqFHYjkuCgYIARAAGAwSNwF-L9IraYNKpsq5D8YJIdHUG_1HNrJap9VOQ0PNgFNCuClpMUGK8OtEMQukk4S6ljMheM7vpaw", "token_expiry": "2021-05-14T20:40:26Z", "token_uri": "https://oauth2.googleapis.com/token", "user_agent": null, "revoke_uri": "https://oauth2.googleapis.com/revoke", "id_token": null, "id_token_jwt": null, "token_response": {"access_token": "ya29.a0AfH6SMD2YWhzMqZvYFGkuGBSg4iA1A9TYcVh2F_v5p1SnpQBQoazcME10cImXgXXTgB57EoZCabyPIROJkQ9i_xO6Ud-86dbY9hYQX_LzVONGc0imEQvZf1VwMzzeUX0rBueso4En8I-DHuB73ScpGrPni8e", "expires_in": 3599, "refresh_token": "1//0cWHbfqFHYjkuCgYIARAAGAwSNwF-L9IraYNKpsq5D8YJIdHUG_1HNrJap9VOQ0PNgFNCuClpMUGK8OtEMQukk4S6ljMheM7vpaw", "scope": "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.appdata", "token_type": "Bearer"}, "scopes": ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.appdata"], "token_info_uri": "https://oauth2.googleapis.com/tokeninfo", "invalid": false, "_class": "OAuth2Credentials", "_module": "oauth2client.client"}' > ./.dvc/tmp/gdrive-user-credentials.json
+      - run:
           name: Run DVC
           # This assumes pytest is installed via the install-package step above
           command: |
