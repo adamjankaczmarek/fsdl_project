@@ -1,0 +1,4 @@
+outs:
+- md5: 6fdc8a6aef3c661a49699a0f2521c5d8
+  size: 1161390277
+  path: best.ckpt

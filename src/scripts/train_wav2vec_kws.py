@@ -12,16 +12,20 @@ from pytorch_lightning.loggers import MLFlowLogger
 from torchmetrics import MetricCollection, Accuracy, Precision, Recall
 from ray.tune.integration.pytorch_lightning import TuneReportCallback
 
+import mlflow
+import mlflow.pytorch
+from mlflow.tracking import MlflowClient
 
-num_workers = 32
+
+num_workers = 12#32
 pin_memory = True
 
 
 cfg = {
-    "batch_size": 256,
-    "w2v_lr": 1e-5,
-    "decoder_lr": 5e-4,
-    "weight_decay": 1e-5
+    "batch_size": 64,
+    "w2v_lr": 6.2e-5,
+    "decoder_lr": 0.00123,
+    "weight_decay": 8.8e-5
 }
 
 dataset_root = "/home/akaczmarek/workspace/fsdl_project/resources/data/SpeechCommandsSplit"
@@ -79,6 +83,7 @@ class Wav2VecKWS(pl.LightningModule):
 
     def test_end(self):
         self.log_dict(self.test_metrics.compute())
+        return self.test_metrics.compute()['test_Accuracy']
 
 
     def train_dataloader(self):
@@ -126,25 +131,45 @@ def train_model(config, gpus, w2v):
         monitor='val_Accuracy',
         mode='min',  
     )
-    tune_callback = TuneReportCallback({"acc": "val_Accuracy"}, on="validation_end")
+    #tune_callback = TuneReportCallback({"acc": "val_Accuracy"}, on="validation_end")
     logger = TensorBoardLogger("tb_logs", name="wav2vec_kws")
-    mlf_logger = MLFlowLogger(experiment_name="wav2vec_kws", tracking_uri="http://192.168.0.32")
+    #mlf_logger = MLFlowLogger(experiment_name="wav2vec_kws", tracking_uri="http://192.168.0.32")
     trainer = pl.Trainer(
-        gpus=gpus, 
-        callbacks=[checkpoint_callback, early_stop_callback, tune_callback],
-        logger=[logger, mlf_logger],
+        gpus=gpus,
+        accelerator='ddp',
+        callbacks=[checkpoint_callback, early_stop_callback],
+        logger=[logger],
         accumulate_grad_batches=4,
         amp_level="O0",
         max_epochs=10,
         progress_bar_refresh_rate=1,
     )
+    if trainer.global_rank == 0:
+        mlflow.set_experiment("wav2vec_kws")
+        mlflow.set_tracking_uri("http://192.168.0.32")
+        mlflow.pytorch.autolog()
+    #with mlflow.start_run() as run:
+        mlflow.log_params(cfg)
+    
     model = Wav2VecKWS(config, w2v)
     
     trainer.fit(model)
-    trainer.test()
-    
-    trainer.save_checkpoint(config["model"]["out"])
-    
+    #trainer.test()
+    delattr(model, "trainer")
+    if trainer.global_rank == 0:
+        mlflow.pytorch.log_model(model, "wav2vec")    
+    #    print_auto_logged_info(mlflow.get_run(run_id=run.info.run_id))
+    #trainer.save_checkpoint(config["model"]["out"])
+
+
+def print_auto_logged_info(r):
+    tags = {k: v for k, v in r.data.tags.items() if not k.startswith("mlflow.")}
+    artifacts = [f.path for f in MlflowClient().list_artifacts(r.info.run_id, "model")]
+    print("run_id: {}".format(r.info.run_id))
+    print("artifacts: {}".format(artifacts))
+    print("params: {}".format(r.data.params))
+    print("metrics: {}".format(r.data.metrics))
+    print("tags: {}".format(tags))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

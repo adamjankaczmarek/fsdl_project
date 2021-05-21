@@ -3,6 +3,7 @@ import time
 import logging
 import streamlit as st
 import numpy as np
+import pandas as pd
 import librosa, librosa.display
 import matplotlib.pyplot as plt
 import pyaudio, wave, pylab
@@ -155,14 +156,20 @@ def main():
             st.write("Please record sound first")
 
     if st.button('Classify'):
-        cnn = init_model()
-        with st.spinner("Classifying the chord"):
-            chord = cnn.predict(WAVE_OUTPUT_FILE, False)
+        #cnn = init_model()
+        #with st.spinner("Classifying the chord"):
+        #    chord = cnn.predict(WAVE_OUTPUT_FILE, False)
         st.success("Classification completed")
-        st.write("### The recorded chord is **", chord + "**")
-        if chord == 'N/A':
-            st.write("Please record sound first")
-        st.write("\n")
+        CLASSES = 'unknown, silence, yes, no, up, down, left, right, on, off, stop, go, zero, one, two, three, four, five, six, seven, eight, nine'.split(', ')
+        logits = np.random.randn(len(CLASSES))
+        logits = logits * (logits > 0)
+        logits_norm = logits / logits.sum()
+        df = pd.DataFrame([logits_norm], columns=CLASSES)
+        st.table(df)
+        #st.write("### The recorded chord is **", chord + "**")
+        #if chord == 'N/A':
+        #    st.write("Please record sound first")
+        #st.write("\n")
 
     # Add a placeholder
     if st.button('Display Spectrogram'):

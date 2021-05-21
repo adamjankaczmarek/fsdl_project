@@ -180,6 +180,28 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "ax-platform"
+version = "0.1.20"
+description = "Adaptive Experimentation"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+botorch = "0.4.0"
+jinja2 = "*"
+pandas = "*"
+plotly = "*"
+scikit-learn = "*"
+scipy = "*"
+typeguard = "*"
+
+[package.extras]
+dev = ["beautifulsoup4", "black", "flake8", "pytest (>=4.6)", "pytest-cov", "sphinx", "sphinx-autodoc-typehints", "torchvision (>=0.5.0)", "nbconvert (<=5.6.1)"]
+mysql = ["SQLAlchemy (>=1.1.13)"]
+notebook = ["jupyter"]
+
+[[package]]
 name = "backcall"
 version = "0.2.0"
 description = "Specifications for callback functions passed in to an API"
@@ -276,6 +298,24 @@ urllib3 = ">=1.25.4,<1.27"
 
 [package.extras]
 crt = ["awscrt (==0.11.15)"]
+
+[[package]]
+name = "botorch"
+version = "0.4.0"
+description = "Bayesian Optimization in PyTorch"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+gpytorch = ">=1.4"
+scipy = "*"
+torch = ">=1.7.1"
+
+[package.extras]
+dev = ["pytest", "pytest-cov", "black", "flake8", "sphinx", "sphinx-autodoc-typehints"]
+test = ["pytest", "pytest-cov"]
+tutorials = ["ax-platform", "cma", "jupyter", "matplotlib", "memory-profiler", "pykeops", "torchvision"]
 
 [[package]]
 name = "cached-property"
@@ -509,7 +549,7 @@ watch = ["pyinotify"]
 
 [[package]]
 name = "dvc"
-version = "2.1.0+c6b4c9"
+version = "2.1.0+960ece"
 description = "Git for data scientists - manage your code and data together"
 category = "main"
 optional = false
@@ -569,7 +609,7 @@ hdfs = ["pyarrow (>=2.0.0)"]
 oss = ["oss2 (==2.6.1)", "pycryptodome (>=3.10)"]
 s3 = ["s3fs (==2021.4.0)", "aiobotocore[boto3] (==1.3.0)"]
 ssh = ["paramiko[invoke] (>=2.7.0)"]
-ssh_gssapi = ["paramiko[gssapi,invoke] (>=2.7.0)"]
+ssh_gssapi = ["paramiko[invoke,gssapi] (>=2.7.0)"]
 tests = ["wheel (==0.36.2)", "pytest (==6.2.4)", "pytest-cov (==2.12.0)", "pytest-xdist (==2.2.1)", "pytest-mock (==3.6.1)", "pytest-lazy-fixture (==0.6.3)", "pytest-timeout (==1.4.2)", "pytest-docker (==0.10.1)", "flaky (==3.7.0)", "mock (==4.0.3)", "rangehttpserver (==1.2.0)", "mock-ssh-server (==0.9.0)", "beautifulsoup4 (==4.9.3)", "wget (==3.2)", "filelock (==3.0.12)", "wsgidav (==3.1.0)", "crc32c (==2.2)", "xmltodict (==0.12.0)", "google-compute-engine (==2.8.13)", "google-cloud-storage (==1.38.0)", "urllib3 (==1.26.4)", "Pygments (==2.9.0)", "collective.checkdocs (==0.2)", "pydocstyle (==6.1.1)", "jaraco.windows (==5.5.0)", "pylint (==2.8.2)", "pylint-pytest (==1.0.3)", "pylint-plugin-utils (==0.6)", "mypy (==0.812)"]
 webdav = ["webdavclient3 (>=3.14.5)"]
 webhdfs = ["hdfs (==2.5.8)"]
@@ -578,7 +618,7 @@ webhdfs = ["hdfs (==2.5.8)"]
 type = "git"
 url = "https://github.com/iterative/dvc"
 reference = "master"
-resolved_reference = "c6b4c94fde971b6c65dc3c2739a7637352d67c77"
+resolved_reference = "960ece926ce635837f49fe848ff291350b84061d"
 
 [[package]]
 name = "entrypoints"
@@ -587,6 +627,14 @@ description = "Discover and load entry points from installed packages."
 category = "main"
 optional = false
 python-versions = ">=2.7"
+
+[[package]]
+name = "enum-compat"
+version = "0.0.3"
+description = "enum/enum34 compatibility package"
+category = "main"
+optional = false
+python-versions = "*"
 
 [[package]]
 name = "fairseq"
@@ -859,6 +907,27 @@ six = ">=1.7"
 
 [package.extras]
 test = ["mock (>=2.0.0)", "pytest (<5.0)"]
+
+[[package]]
+name = "gpytorch"
+version = "1.4.2"
+description = "An implementation of Gaussian Processes in Pytorch"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+scikit-learn = "*"
+scipy = "*"
+torch = ">=1.7"
+
+[package.extras]
+dev = ["black", "twine", "pre-commit"]
+docs = ["ipython", "ipykernel", "sphinx (<3.0.0)", "sphinx-rtd-theme", "nbsphinx", "m2r"]
+examples = ["ipython", "jupyter", "matplotlib", "scipy", "torchvision", "tqdm"]
+keops = ["pykeops (>=1.1.1)"]
+pyro = ["pyro-ppl (>=1.0.0)"]
+test = ["flake8", "flake8-print", "pytest", "nbval"]
 
 [[package]]
 name = "grandalf"
@@ -1673,6 +1742,18 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "plotly"
+version = "4.14.3"
+description = "An open-source, interactive data visualization library for Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+retrying = ">=1.3.3"
+six = "*"
+
+[[package]]
 name = "ply"
 version = "3.11"
 description = "Python Lex & Yacc"
@@ -2209,6 +2290,17 @@ docs = ["sphinx (!=1.3.1)", "numpydoc"]
 tests = ["pytest (<4)", "pytest-cov"]
 
 [[package]]
+name = "retrying"
+version = "1.3.3"
+description = "Retrying"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+six = ">=1.7.0"
+
+[[package]]
 name = "rich"
 version = "10.2.0"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
@@ -2577,6 +2669,18 @@ numpy = "*"
 typing-extensions = "*"
 
 [[package]]
+name = "torch-model-archiver"
+version = "0.3.1"
+description = "Torch Model Archiver is used for creating archives of trained neural net models that can be consumed by TorchServe inference"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+enum-compat = "*"
+future = "*"
+
+[[package]]
 name = "torchaudio"
 version = "0.8.1"
 description = "An audio package for PyTorch"
@@ -2598,6 +2702,20 @@ python-versions = ">=3.6"
 [package.dependencies]
 packaging = "*"
 torch = ">=1.3.1"
+
+[[package]]
+name = "torchserve"
+version = "0.3.1"
+description = "TorchServe is a tool for serving neural net models for inference"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+future = "*"
+packaging = "*"
+Pillow = "*"
+psutil = "*"
 
 [[package]]
 name = "torchvision"
@@ -2649,6 +2767,18 @@ ipython-genutils = "*"
 
 [package.extras]
 test = ["pytest"]
+
+[[package]]
+name = "typeguard"
+version = "2.12.0"
+description = "Run-time type checker for Python"
+category = "main"
+optional = false
+python-versions = ">=3.5.3"
+
+[package.extras]
+doc = ["sphinx-rtd-theme", "sphinx-autodoc-typehints (>=1.2.0)"]
+test = ["pytest", "typing-extensions", "mypy"]
 
 [[package]]
 name = "typing-extensions"
@@ -2835,7 +2965,7 @@ test = ["zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "82bbd048584dd53595ec9146b170b275a46b683ec80754ffd21da8338bd07d48"
+content-hash = "4632a3c9859654a38629bf6d333459720a0211006d54f010862a3759e8a249ce"
 
 [metadata.files]
 absl-py = [
@@ -2949,6 +3079,10 @@ attrs = [
 audioread = [
     {file = "audioread-2.1.9.tar.gz", hash = "sha256:a3480e42056c8e80a8192a54f6729a280ef66d27782ee11cbd63e9d4d1523089"},
 ]
+ax-platform = [
+    {file = "ax-platform-0.1.20.tar.gz", hash = "sha256:a2ba7648c282e0328c2eb992aa933c11c8ca407c9753cf4cdf05af749d8651e6"},
+    {file = "ax_platform-0.1.20-py3-none-any.whl", hash = "sha256:ea2d91513e591b3599a5cd8efe0a590e477abc0529328f5ec188a6154f1f14b3"},
+]
 backcall = [
     {file = "backcall-0.2.0-py2.py3-none-any.whl", hash = "sha256:fbbce6a29f263178a1f7915c1940bde0ec2b2a967566fe1c65c1dfb7422bd255"},
     {file = "backcall-0.2.0.tar.gz", hash = "sha256:5cbdbf27be5e7cfadb448baf0aa95508f91f2bbc6c6437cd9cd06e2a4c215e1e"},
@@ -2979,6 +3113,10 @@ boto3 = [
 botocore = [
     {file = "botocore-1.20.75-py2.py3-none-any.whl", hash = "sha256:80fc9a463bcc6368ed95d4b10717f5bb87288b930b3ccf96ce480d1c65e20e5c"},
     {file = "botocore-1.20.75.tar.gz", hash = "sha256:ab1bd5d5f86a4fdd194129a6102e5193209d3c4676dd76881769d6894bbaab7e"},
+]
+botorch = [
+    {file = "botorch-0.4.0-py3-none-any.whl", hash = "sha256:4de6ec904707b17bc304dbd6d9f3657b3e3688d4e2bf8338c263ecfa908133ee"},
+    {file = "botorch-0.4.0.tar.gz", hash = "sha256:d98dd303294207b955a794b12433cc5ac2331e36cebf1b94f75c5f5162be861b"},
 ]
 cached-property = [
     {file = "cached-property-1.5.2.tar.gz", hash = "sha256:9fa5755838eecbb2d234c3aa390bd80fbd3ac6b6869109bfc1b499f7bd89a130"},
@@ -3168,6 +3306,10 @@ entrypoints = [
     {file = "entrypoints-0.3-py2.py3-none-any.whl", hash = "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19"},
     {file = "entrypoints-0.3.tar.gz", hash = "sha256:c70dd71abe5a8c85e55e12c19bd91ccfeec11a6e99044204511f9ed547d48451"},
 ]
+enum-compat = [
+    {file = "enum-compat-0.0.3.tar.gz", hash = "sha256:3677daabed56a6f724451d585662253d8fb4e5569845aafa8bb0da36b1a8751e"},
+    {file = "enum_compat-0.0.3-py3-none-any.whl", hash = "sha256:88091b617c7fc3bbbceae50db5958023c48dc40b50520005aa3bf27f8f7ea157"},
+]
 fairseq = []
 filelock = [
     {file = "filelock-3.0.12-py3-none-any.whl", hash = "sha256:929b7d63ec5b7d6b71b0fa5ac14e030b3f70b75747cef1b10da9b879fef15836"},
@@ -3232,6 +3374,10 @@ googleapis-common-protos = [
 ]
 gpustat = [
     {file = "gpustat-0.6.0.tar.gz", hash = "sha256:f69135080b2668b662822633312c2180002c10111597af9631bb02e042755b6c"},
+]
+gpytorch = [
+    {file = "gpytorch-1.4.2-py2.py3-none-any.whl", hash = "sha256:37f21a7e23002ef5df8fe889ae07d3475d895e3ce2eefe714e7a02b5b9b23bb3"},
+    {file = "gpytorch-1.4.2.tar.gz", hash = "sha256:896143a070ed73922ff948659e363c5ba562350ab9027a97057edd839c65297e"},
 ]
 grandalf = [
     {file = "grandalf-0.6-py2-none-any.whl", hash = "sha256:d671fdfa5310f2639538b6c858c4b1aef7755535ccfcb9c1cdf0d29171326add"},
@@ -3849,6 +3995,10 @@ pillow = [
     {file = "Pillow-8.2.0-pp37-pypy37_pp73-win32.whl", hash = "sha256:e98eca29a05913e82177b3ba3d198b1728e164869c613d76d0de4bde6768a50e"},
     {file = "Pillow-8.2.0.tar.gz", hash = "sha256:a787ab10d7bb5494e5f76536ac460741788f1fbce851068d73a87ca7c35fc3e1"},
 ]
+plotly = [
+    {file = "plotly-4.14.3-py2.py3-none-any.whl", hash = "sha256:d68fc15fcb49f88db27ab3e0c87110943e65fee02a47f33a8590f541b3042461"},
+    {file = "plotly-4.14.3.tar.gz", hash = "sha256:7d8aaeed392e82fb8e0e48899f2d3d957b12327f9d38cdd5802bc574a8a39d91"},
+]
 ply = [
     {file = "ply-3.11-py2.py3-none-any.whl", hash = "sha256:096f9b8350b65ebd2fd1346b12452efe5b9607f7482813ffca50c22722a807ce"},
     {file = "ply-3.11.tar.gz", hash = "sha256:00c7c1aaa88358b9c765b6d3000c6eec0ba42abca5351b095321aef446081da3"},
@@ -4264,6 +4414,9 @@ requests-oauthlib = [
 resampy = [
     {file = "resampy-0.2.2.tar.gz", hash = "sha256:62af020d8a6674d8117f62320ce9470437bb1d738a5d06cd55591b69b463929e"},
 ]
+retrying = [
+    {file = "retrying-1.3.3.tar.gz", hash = "sha256:08c039560a6da2fe4f2c426d0766e284d3b736e355f8dd24b37367b0bb41973b"},
+]
 rich = [
     {file = "rich-10.2.0-py3-none-any.whl", hash = "sha256:2701b69b9646a12b05d80f9d96a48615d4b68678fbfa67a60aa2834a62ad01e7"},
     {file = "rich-10.2.0.tar.gz", hash = "sha256:a30429d82363d42e7c64e324c2c8735c045f190cba609feee91a7b9f563a64b5"},
@@ -4500,6 +4653,9 @@ torch = [
     {file = "torch-1.8.1-cp39-cp39-win_amd64.whl", hash = "sha256:dac4d10494e74f7e553c92d7263e19ea501742c4825ddd26c4decfa27be95981"},
     {file = "torch-1.8.1-cp39-none-macosx_10_9_x86_64.whl", hash = "sha256:225ee4238c019b28369c71977327deeeb2bd1c6b8557e6fcf631b8866bdc5447"},
 ]
+torch-model-archiver = [
+    {file = "torch_model_archiver-0.3.1-py2.py3-none-any.whl", hash = "sha256:502dbbc6f02d5652087dad16465567d6e0c943f6b843ddec4e34cce5187c4829"},
+]
 torchaudio = [
     {file = "torchaudio-0.8.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:c4155628a22a145f8324e0f66ddc376c9828271c2b9dc7ddfeffa1aa4d5c637a"},
     {file = "torchaudio-0.8.1-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:9d9962a435dcb91251e22c68c68e87b76aea3e28990cff48e0509dd6cb9e2729"},
@@ -4517,6 +4673,9 @@ torchaudio = [
 torchmetrics = [
     {file = "torchmetrics-0.3.2-py3-none-any.whl", hash = "sha256:04bfbfdf4fb12f7191fa86b4e42efb7205d4cb95e833b6add60f55fdba9ae5fb"},
     {file = "torchmetrics-0.3.2.tar.gz", hash = "sha256:351391e79f20458fa3a2876b2e559ebb69536d8c38b47b085b66ac5acfb7269d"},
+]
+torchserve = [
+    {file = "torchserve-0.3.1-py2.py3-none-any.whl", hash = "sha256:509d0d9537d6bb0e94ff041abe7008498e085f4fe8957ec903c60fff09aaf0d0"},
 ]
 torchvision = [
     {file = "torchvision-0.9.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:da4c4f7363b60b0637354974ea0a29dbc301f66c9f25d92ed5f10637909f3500"},
@@ -4586,6 +4745,10 @@ tqdm = [
 traitlets = [
     {file = "traitlets-5.0.5-py3-none-any.whl", hash = "sha256:69ff3f9d5351f31a7ad80443c2674b7099df13cc41fc5fa6e2f6d3b0330b0426"},
     {file = "traitlets-5.0.5.tar.gz", hash = "sha256:178f4ce988f69189f7e523337a3e11d91c786ded9360174a3d9ca83e79bc5396"},
+]
+typeguard = [
+    {file = "typeguard-2.12.0-py3-none-any.whl", hash = "sha256:7d1cf82b35e9ff3cd083133ebda54ad1d7a40296471397e6c6b229cf07fe5307"},
+    {file = "typeguard-2.12.0.tar.gz", hash = "sha256:fca77fd4ccba63465b421cdbbab5a1a8e3994e6d6f18b45da2bb475c09f147ef"},
 ]
 typing-extensions = [
     {file = "typing_extensions-3.10.0.0-py2-none-any.whl", hash = "sha256:0ac0f89795dd19de6b97debb0c6af1c70987fd80a2d62d1958f7e56fcc31b497"},
