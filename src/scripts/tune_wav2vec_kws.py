@@ -10,6 +10,9 @@ from pytorch_lightning.loggers import MLFlowLogger
 from ray.tune.integration.mlflow import mlflow_mixin
 from ray.tune.integration.pytorch_lightning import TuneReportCallback
 
+from ray.tune.schedulers import AsyncHyperBandScheduler
+from ray.tune.suggest.ax import AxSearch
+
 
 config = {
     "w2v_lr": tune.loguniform(1e-5, 1e-1),
@@ -50,11 +53,12 @@ def train_model(config, gpus, w2v, num_epochs=10):
         amp_level="O0",
         max_epochs=num_epochs,
         progress_bar_refresh_rate=1,
+        log_every_n_steps=1,
+        flush_logs_every_n_steps=1
     )
     config = argparse.Namespace(**config)
     model = Wav2VecKWS(config, w2v)
     trainer.fit(model)
-    trainer.test()
 
 
 def main():
@@ -75,14 +79,19 @@ def main():
         num_epochs=args.num_epochs,
     )
 
+    algo = AxSearch(max_concurrent=4)
+    scheduler = AsyncHyperBandScheduler()
+
     analysis = tune.run(
         trainable,
         resources_per_trial={
             "cpu": 4,
             "gpu": gpus_per_trial
         },
-        metric="loss",
-        mode="min",
+        metric="acc",
+        mode="max",
+        search_alg=algo,
+        scheduler=scheduler,
         config=config,
         num_samples=args.num_samples,
         name="tune_w2v_lr"
