@@ -33,7 +33,7 @@ jobs:
       - checkout
       - run:
           name: Install Deps
-          command: sudo apt install portaudio19-dev
+          command: sudo apt-get install portaudio19-dev
       - python/install-packages:
           pkg-manager: poetry
           # app-dir: ~/project/package-directory/  # If you're requirements.txt isn't in the root directory.
