@@ -10,6 +10,12 @@ import pyaudio, wave, pylab
 import matplotlib.pyplot as plt
 from scipy.io.wavfile import write
 
+import httpx
+from httpx import HTTPError
+
+
+API_URL = "http://127.0.0.1:8080/predictions/"
+MODEL_NAME = "kws"
 
 logger = logging.getLogger(__name__)
 
@@ -41,9 +47,6 @@ IMAGE_DIR = os.path.join(OUT_DIR, 'images')
 WAVE_OUTPUT_FILE = os.path.join(RECORDING_DIR, "recorded.wav")
 SPECTROGRAM_FILE = os.path.join(RECORDING_DIR, "spectrogram.png")
 
-# Features #################
-CLASSES = ['a', 'am', 'bm', 'c', 'd', 'dm', 'e', 'em', 'f', 'g']
-CLASSES_MAP = {'a':0, 'am':1, 'bm':2, 'c':3, 'd':4, 'dm':5, 'e':6, 'em':7, 'f':8, 'g':9}
 
 # Audio configurations
 INPUT_DEVICE = 0
@@ -136,6 +139,18 @@ def display(spectrogram, format):
     st.pyplot(clear_figure=False)
 
 
+def raise_on_not200(response):
+    if response.status_code != 200:
+        st.write("There was an error!")
+        st.write(response)
+
+
+client = httpx.Client(timeout=1000, event_hooks={"response": [raise_on_not200]})
+
+def predict(input_):
+    res = client.post(API_URL + MODEL_NAME, content=input_)
+    return res.json()
+
 def main():
     title = "Keyword Spotting UI"
     st.title(title)
@@ -157,14 +172,17 @@ def main():
 
     if st.button('Classify'):
         #cnn = init_model()
-        #with st.spinner("Classifying the chord"):
+        with st.spinner("Classifying the chord"):
         #    chord = cnn.predict(WAVE_OUTPUT_FILE, False)
+            with open(WAVE_OUTPUT_FILE, 'rb') as audio_file:
+                audio_bytes = audio_file.read()
+            logits = predict(audio_bytes)
         st.success("Classification completed")
         CLASSES = 'unknown, silence, yes, no, up, down, left, right, on, off, stop, go, zero, one, two, three, four, five, six, seven, eight, nine'.split(', ')
-        logits = np.random.randn(len(CLASSES))
-        logits = logits * (logits > 0)
-        logits_norm = logits / logits.sum()
+        logits = np.array(logits)
+        logits_norm = np.exp(logits) / np.sum(np.exp(logits))
         df = pd.DataFrame([logits_norm], columns=CLASSES)
+        st.title(CLASSES[np.argmax(logits)])
         st.table(df)
         #st.write("### The recorded chord is **", chord + "**")
         #if chord == 'N/A':
