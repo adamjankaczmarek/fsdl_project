@@ -70,7 +70,7 @@ jobs:
       #       - deps-{{ checksum "./kws.mar" }}
       - run: 
           name: Build MAR Archive
-          command: poetry run torch-model-archiver --model-name kws --version 0.1 --serialized-file ./resources/models/pretrained/wav2vec_small.pt --model-file ./models/wav2vec_kws/best.ckpt --handler ./app/deployment/handler.py --extra-files="./app/deployment/wav2keyword.py" --force
+          command: poetry run torch-model-archiver --model-name kws --version 0.1 --serialized-file ./resources/models/pretrained/wav2vec_small.pt --model-file ./models/wav2vec_kws/best.ckpt --handler ./app/deployment/handler.py
       # - save_cache:
       #     key: deps-{{ checksum "./kws.mar" }}
       #     paths:
