@@ -36,10 +36,17 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get install portaudio19-dev
+      - restore_cache:
+          keys:
+            - deps-{{ checksum "poetry.lock" }}
       - python/install-packages:
           pkg-manager: poetry
           # app-dir: ~/project/package-directory/  # If you're requirements.txt isn't in the root directory.
           # pip-dependency-file: test-requirements.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
+      - save_cache:
+          key: deps-{{ checksum "poetry.lock" }}
+          paths:
+            - /home/circleci/.cache/pypoetry/virtualenvs
       - run:
           name: Config GDrive Access
           command: |
@@ -49,5 +56,4 @@ jobs:
           name: Run DVC
           # This assumes pytest is installed via the install-package step above
           command: |
-            poetry shell
-            dvc pull ./models/wav2vec_kws/best.ckpt.dvc
+            poetry run dvc pull ./models/wav2vec_kws/best.ckpt.dvc
