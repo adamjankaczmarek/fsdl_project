@@ -1,0 +1,99 @@
+version: '3.3'
+
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+
+services:
+    nettools:
+      restart: always
+      image: praqma/network-multitool
+      container_name: network_tool
+      networks:
+        - grafana
+        - serving
+
+    serving:
+      restart: always
+      image: szybkiadas/fsdl-serving:latest
+      container_name: kws_serving
+      ports:
+        - "8880:8080"
+        - "8881:8081"
+        - "8882:8082"
+        - "7770:7070"
+        - "7771:7071"
+      networks:
+        - serving
+      deploy:
+        resources:
+          reservations:
+            devices:
+            - capabilities: [gpu]
+
+    prometheus:
+        restart: always
+        image: prom/prometheus
+        container_name: kws_prometheus
+        ports:
+          - "9090:9090"
+        networks:
+            - serving
+            - grafana
+        volumes:
+            - prometheus_data:/prometheus
+            - ./prometheus:/etc/prometheus
+    grafana:
+        image: grafana/grafana
+        user: "472"
+        depends_on:
+          - prometheus
+        ports:
+          - 3000:3000
+        volumes:
+          - grafana_data:/var/lib/grafana
+          - ./grafana/provisioning/:/etc/grafana/provisioning/
+        env_file:
+          - ./grafana/config.monitoring
+        networks:
+          - grafana
+        restart: always
+              #    web:
+              #        restart: always
+              #        build:
+              #          context: .
+              #          dockerfile: Dockerfile.mlflow
+              #        image: mlflow_server
+              #        container_name: mlflow_server
+              #        expose:
+              #            - "5000"
+              #        environment: 
+              #          - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+              #          - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+              #          - AWS_DEFAULT_REGION=${AWS_REGION}
+              #          - MLFLOW_S3_ENDPOINT_URL=http://s3:9000
+              #        networks:
+              #            - frontend
+              #            - backend
+              #        command: mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE} --default-artifact-root s3://${AWS_BUCKET_NAME}/ --host 0.0.0.0        
+              #
+              #    nginx:
+              #        restart: always
+              #        build: 
+              #          context: .
+              #          dockerfile: Dockerfile.nginx
+              #        image: mlflow_nginx
+              #        container_name: mlflow_nginx
+              #        ports:
+              #            - "80:80"
+              #        networks:
+              #            - frontend
+              #        depends_on:
+              #            - web
+
+networks:
+    serving:
+        driver: bridge
+    grafana:
+        driver: bridge
+
