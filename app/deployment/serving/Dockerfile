@@ -2,7 +2,6 @@ FROM pytorch/torchserve:latest-gpu
 
 COPY ./model_store /home/model_store
 COPY ./requirements.txt /requirements.txt
-COPY ./wheels /wheels
 
 USER root
 RUN apt-get update
