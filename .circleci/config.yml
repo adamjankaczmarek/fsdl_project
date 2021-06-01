@@ -85,7 +85,6 @@ jobs:
           destination: model-package
       - setup_remote_docker:
           version: 19.03.13
-          docker_layer_caching: true
       - run:
           name: Build Docker image
           command: |
