@@ -13,9 +13,26 @@ workflows:
     # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows 
     jobs:
       - build-and-test
-
+      - dockerize
 
 jobs:
+  dockerize:
+    docker:
+      - image: docker:18.06.0-ce-git
+    environment:
+      IMAGE_NAME: szybkiadas/fsdl_serving
+    steps:
+      - run:
+          name: Build Docker image
+          command: |
+            cd ./app/deployment/serving
+            docker build -t $IMAGE_NAME:latest .
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin
+            docker push $IMAGE_NAME:latest
+
   build-and-test:  # This is the name of the job, feel free to change it to better match what you're trying to do!
     # These next lines defines a Docker executors: https://circleci.com/docs/2.0/executor-types/
     # You can specify an image from Dockerhub or use one of the convenience images from CircleCI's Developer Hub
@@ -24,8 +41,6 @@ jobs:
     # Change the version below to your required version of python
     docker:
       - image: cimg/python:3.8
-    environment:
-      IMAGE_NAME: szybkiadas/fsdl_serving
     # Checkout the code as the first step. This is a dedicated CircleCI step.
     # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
     # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
@@ -53,7 +68,7 @@ jobs:
           name: Config GDrive Access
           command: |
             mkdir -p ./.dvc/tmp
-            echo '{"access_token": "ya29.a0AfH6SMD2YWhzMqZvYFGkuGBSg4iA1A9TYcVh2F_v5p1SnpQBQoazcME10cImXgXXTgB57EoZCabyPIROJkQ9i_xO6Ud-86dbY9hYQX_LzVONGc0imEQvZf1VwMzzeUX0rBueso4En8I-DHuB73ScpGrPni8e", "client_id": "710796635688-iivsgbgsb6uv1fap6635dhvuei09o66c.apps.googleusercontent.com", "client_secret": "a1Fz59uTpVNeG_VGuSKDLJXv", "refresh_token": "1//0cWHbfqFHYjkuCgYIARAAGAwSNwF-L9IraYNKpsq5D8YJIdHUG_1HNrJap9VOQ0PNgFNCuClpMUGK8OtEMQukk4S6ljMheM7vpaw", "token_expiry": "2021-05-14T20:40:26Z", "token_uri": "https://oauth2.googleapis.com/token", "user_agent": null, "revoke_uri": "https://oauth2.googleapis.com/revoke", "id_token": null, "id_token_jwt": null, "token_response": {"access_token": "ya29.a0AfH6SMD2YWhzMqZvYFGkuGBSg4iA1A9TYcVh2F_v5p1SnpQBQoazcME10cImXgXXTgB57EoZCabyPIROJkQ9i_xO6Ud-86dbY9hYQX_LzVONGc0imEQvZf1VwMzzeUX0rBueso4En8I-DHuB73ScpGrPni8e", "expires_in": 3599, "refresh_token": "1//0cWHbfqFHYjkuCgYIARAAGAwSNwF-L9IraYNKpsq5D8YJIdHUG_1HNrJap9VOQ0PNgFNCuClpMUGK8OtEMQukk4S6ljMheM7vpaw", "scope": "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.appdata", "token_type": "Bearer"}, "scopes": ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.appdata"], "token_info_uri": "https://oauth2.googleapis.com/tokeninfo", "invalid": false, "_class": "OAuth2Credentials", "_module": "oauth2client.client"}' > ./.dvc/tmp/gdrive-user-credentials.json
+            echo $GDRIVE_CREDENTIALS > ./.dvc/tmp/gdrive-user-credentials.json
       - restore_cache:
           keys:
           - deps-{{ checksum "./models/wav2vec_kws/best.ckpt.dvc" }}
@@ -82,13 +97,3 @@ jobs:
       - store_artifacts:
           path: ./kws.mar
           destination: model-package
-      - run:
-          name: Build Docker image
-          command: |
-            cd ./app/deployment/serving
-            docker build -t $IMAGE_NAME:latest .
-      - run:
-          name: Publish Docker Image to Docker Hub
-          command: |
-            echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin
-            docker push $IMAGE_NAME:latest
