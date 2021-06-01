@@ -36,6 +36,7 @@ jobs:
       - run:
           name: Install Deps
           command: |
+            docker --version
             sudo apt-get update
             sudo apt-get install portaudio19-dev
       - restore_cache:
