@@ -14,7 +14,7 @@ import httpx
 from httpx import HTTPError
 
 
-API_URL = "http://127.0.0.1:8080/predictions/"
+API_URL = "http://127.0.0.1:8880/predictions/"
 MODEL_NAME = "kws"
 
 logger = logging.getLogger(__name__)

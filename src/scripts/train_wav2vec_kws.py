@@ -67,7 +67,7 @@ class Wav2VecKWS(pl.LightningModule):
         return loss
 
     def validation_step(self, batch, batch_idx):
-        x, y = batch['net_input'], batch['target'] 
+        x, y = batch['net_input'], batch['target']
         logits = self.model(x)
         output = self.valid_metrics(torch.argmax(logits, dim=-1), y)
         self.log_dict(output)
