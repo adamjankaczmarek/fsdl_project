@@ -99,7 +99,7 @@ multidict==5.1.0
 nanotime==0.5.2
 nest-asyncio==1.5.1
 networkx==2.5
-notebook==6.4.0
+notebook==6.4.1
 numba==0.51.2
 numpy
 nvidia-ml-py3==7.352.0
